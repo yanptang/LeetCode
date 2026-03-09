@@ -9,16 +9,39 @@
 
 #本质上我门把需要的钱的数量，先转成钱的价值的组合，再去找到达这个金额的组合的数量
 
+from typing import List
+
 class Solution:
     def coinChange(self, coins: List[int], amount: int) -> int:
-        dp=[float('inf')]*(amount+1)
-        dp[0]=0
-
-        #对每一个金额
-        #遍历计算每一个coins是否可以兑换，可以兑换就去寻找上一个最小的
-        for i in range(1,amount+1):
-            for coin in coins:
-                if i>=coin:
-                    dp[i]=min(dp[i],dp[i-coin]+1) #被使用了一次+1
+        """
+        零钱兑换 - 动态规划 (完全背包问题)
         
-        return dp[amount] if dp[amount]!=float('inf') else -1
+        时间复杂度: O(amount * n)，其中 n 是硬币的种类数
+        空间复杂度: O(amount)
+        """
+        # dp[i] 表示凑成金额 i 所需的最少硬币数
+        # 初始值为 float('inf')，方便后续求 min
+        dp = [float('inf')] * (amount + 1)
+        
+        # 边界条件：凑金额0需要0个硬币
+        dp[0] = 0
+        
+        # 遍历从 1 到 amount 的每一种金额
+        for i in range(1, amount + 1):
+            # 遍历每一种硬币
+            for coin in coins:
+                # 只有当硬币面额 <= 当前金额时，才能使用这个硬币
+                if coin <= i:
+                    # 转移方程：选择用这枚硬币，个数就是 dp[i-coin] + 1
+                    dp[i] = min(dp[i], dp[i - coin] + 1)
+                    
+        # 如果 dp[amount] 还是无穷大，说明没有组合能凑出该金额，返回-1
+        return dp[amount] if dp[amount] != float('inf') else -1
+
+
+# 测试
+if __name__ == "__main__":
+    solution = Solution()
+    print(solution.coinChange([1, 2, 5], 11))  # 输出: 3 (5+5+1)
+    print(solution.coinChange([2], 3))         # 输出: -1
+    print(solution.coinChange([1], 0))         # 输出: 0
