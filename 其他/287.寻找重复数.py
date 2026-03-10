@@ -12,4 +12,27 @@ class Solution:
             else:
                 left = mid + 1
         return left
-    
+
+class Solution2:
+    def findDuplicate(self, nums: List[int]) -> int:
+        """
+        解法二：快慢指针（数组视为链表找环入口），弗洛伊德解法
+        时间复杂度: O(N)
+        空间复杂度: O(1)
+        """
+        slow, fast = 0, 0
+        
+        # 1. 第一阶段：寻找相遇点，判断是否有环
+        while True:
+            slow = nums[slow]           # 慢指针走一步
+            fast = nums[nums[fast]]     # 快指针走两步
+            if slow == fast:            # 必然在环内某处相遇
+                break
+                
+        # 2. 第二阶段：寻找环的入口（即为重复的数字）
+        slow = 0                        # 慢指针回到起点
+        while slow != fast:             # 当没有再次相遇时
+            slow = nums[slow]           # 这次两个指针每次都只走一步
+            fast = nums[fast]
+            
+        return slow
